@@ -79,14 +79,15 @@ void printJalurDistribusi() {
     PusatDistribusi *currentNode = root;
 
     while (currentNode->nextNode) {
-        std::cout << currentNode->nama << ": " << std::endl;
+        std::cout << "Pusat distribusi " << currentNode->nama << ": "
+                  << std::endl;
 
         int index             = 0;
         JalurDistribusi *item = currentNode->jalur[index];
 
         while (item) {
-            std::cout << "- " << item->node->nama << " jarak " << item->jarak
-                      << std::endl;
+            std::cout << "\t- Jalur " << item->node->nama << ", jarak "
+                      << item->jarak << std::endl;
 
             index++;
             item = currentNode->jalur[index];
