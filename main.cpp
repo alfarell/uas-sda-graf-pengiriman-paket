@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unordered_map>
 
 #define MAX_JALUR 10
 
@@ -97,6 +98,8 @@ void printJalurDistribusi() {
     }
 }
 
+void pencarianRute(char start, char finish);
+
 int main(int argc, char const *argv[]) {
     tambahJalurPusatDistribusi('A', 'B', 5);
     tambahJalurPusatDistribusi('A', 'C', 10);
@@ -110,7 +113,23 @@ int main(int argc, char const *argv[]) {
     tambahJalurPusatDistribusi('H', 'I', 12);
     tambahJalurPusatDistribusi('I', 'J', 5);
 
-    printJalurDistribusi();
+    // printJalurDistribusi();
+
+    pencarianRute('A', 'J');
 
     return 0;
+}
+
+void pencarianRute(char start, char finish) {
+    PusatDistribusi *startNode  = cariNode(start);
+    PusatDistribusi *finishNode = cariNode(finish);
+
+    if (!startNode || !finishNode) {
+        std::cout << "Node asal atau tujuan tidak ditemukan.\n";
+        return;
+    }
+
+    char variasiJarak[MAX_JALUR][MAX_JALUR];
+    int variasiTotalJarak[MAX_JALUR];
+    int jarakDitempuh = 0;
 }
