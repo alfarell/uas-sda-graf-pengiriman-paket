@@ -1,5 +1,4 @@
 #include <iostream>
-#include <unordered_map>
 
 #define MAX_JALUR 10
 
@@ -121,15 +120,72 @@ int main(int argc, char const *argv[]) {
 }
 
 void pencarianRute(char start, char finish) {
-    PusatDistribusi *startNode  = cariNode(start);
-    PusatDistribusi *finishNode = cariNode(finish);
+    PusatDistribusi *nodeArray[MAX_JALUR] = {nullptr};
+    bool visited[MAX_JALUR]               = {false};
+    PusatDistribusi *parent[MAX_JALUR]    = {nullptr};
+    PusatDistribusi *queue[MAX_JALUR];
+    int head = 0, tail = 0;
 
-    if (!startNode || !finishNode) {
-        std::cout << "Node asal atau tujuan tidak ditemukan.\n";
+    // Membuat daftar node dari linked list
+    PusatDistribusi *current = root;
+    while (current) {
+        int index        = current->nama - 'A';
+        nodeArray[index] = current;
+        current          = current->nextNode;
+    }
+
+    // Validasi node awal dan tujuan
+    int idxStart  = start - 'A';
+    int idxFinish = finish - 'A';
+    if (!nodeArray[idxStart] || !nodeArray[idxFinish]) {
+        std::cout << "Node tidak ditemukan.\n";
         return;
     }
 
-    char variasiJarak[MAX_JALUR][MAX_JALUR];
-    int variasiTotalJarak[MAX_JALUR];
-    int jarakDitempuh = 0;
+    // Inisialisasi BFS
+    visited[idxStart] = true;
+    queue[tail++]     = nodeArray[idxStart];
+    parent[idxStart]  = nullptr;
+
+    bool ditemukan = false;
+
+    while (head < tail) {
+        PusatDistribusi *node = queue[head++];
+        if (node->nama == finish) {
+            ditemukan = true;
+            break;
+        }
+
+        for (int i = 0; i < MAX_JALUR && node->jalur[i]; ++i) {
+            PusatDistribusi *targetNode = node->jalur[i]->node;
+            int idxTarget               = targetNode->nama - 'A';
+            if (!visited[idxTarget]) {
+                visited[idxTarget] = true;
+                parent[idxTarget]  = node;
+                queue[tail++]      = targetNode;
+            }
+        }
+    }
+
+    if (!ditemukan) {
+        std::cout << "Tidak ada jalur dari " << start << " ke " << finish
+                  << ".\n";
+        return;
+    }
+
+    // Menyusun jalur menggunakan array path (dari belakang)
+    PusatDistribusi *path[MAX_JALUR];
+    int pathLen = 0;
+    for (PusatDistribusi *n = nodeArray[idxFinish]; n != nullptr;
+         n                  = parent[n->nama - 'A']) {
+        path[pathLen++] = n;
+    }
+
+    // Mencetak urutan jalur dari item terakhir
+    std::cout << "Jalur dari " << start << " ke " << finish << " (BFS): ";
+    for (int i = pathLen - 1; i >= 0; --i) {
+        std::cout << path[i]->nama;
+        if (i != 0) std::cout << " -> ";
+    }
+    std::cout << "\n";
 }
